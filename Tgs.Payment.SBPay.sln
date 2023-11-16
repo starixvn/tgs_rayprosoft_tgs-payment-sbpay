@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34009.444
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tgs.Payment.SBPay", "Tgs.Payment.SBPay\Tgs.Payment.SBPay.csproj", "{B8C8E91F-ED6B-4EB7-8B6D-7536D2E18443}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{996C6CDF-A33F-4683-A1A9-12E9D4030831}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		nuget.config = nuget.config
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SBPay.Core", "SBPay.Core\SBPay.Core.csproj", "{FD245EA3-B45F-44A0-BE1F-4EF06B216022}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SBPay.Client", "SBPay.Client\SBPay.Client.csproj", "{3C106DA5-B4E3-4F71-B9AD-E742C8906CB3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SBPay.Core.UnitTests", "SBPay.Core.UnitTests\SBPay.Core.UnitTests.csproj", "{C4431A7F-76FF-4D9B-BEB5-1F1DDB547805}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SBPayTest", "SBPayTest\SBPayTest.csproj", "{2F469298-E27E-4B1A-9F2D-CAAB798C703E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tgs.Payment.SBPay.IntegrationTests", "Tgs.Payment.SBPay.IntegrationTests\Tgs.Payment.SBPay.IntegrationTests.csproj", "{E195DBFE-89B5-4F7D-A6CB-2229BBDB9785}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B8C8E91F-ED6B-4EB7-8B6D-7536D2E18443}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8C8E91F-ED6B-4EB7-8B6D-7536D2E18443}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8C8E91F-ED6B-4EB7-8B6D-7536D2E18443}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8C8E91F-ED6B-4EB7-8B6D-7536D2E18443}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD245EA3-B45F-44A0-BE1F-4EF06B216022}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD245EA3-B45F-44A0-BE1F-4EF06B216022}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD245EA3-B45F-44A0-BE1F-4EF06B216022}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD245EA3-B45F-44A0-BE1F-4EF06B216022}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C106DA5-B4E3-4F71-B9AD-E742C8906CB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C106DA5-B4E3-4F71-B9AD-E742C8906CB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C106DA5-B4E3-4F71-B9AD-E742C8906CB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C106DA5-B4E3-4F71-B9AD-E742C8906CB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4431A7F-76FF-4D9B-BEB5-1F1DDB547805}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4431A7F-76FF-4D9B-BEB5-1F1DDB547805}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4431A7F-76FF-4D9B-BEB5-1F1DDB547805}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4431A7F-76FF-4D9B-BEB5-1F1DDB547805}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F469298-E27E-4B1A-9F2D-CAAB798C703E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F469298-E27E-4B1A-9F2D-CAAB798C703E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F469298-E27E-4B1A-9F2D-CAAB798C703E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F469298-E27E-4B1A-9F2D-CAAB798C703E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E195DBFE-89B5-4F7D-A6CB-2229BBDB9785}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E195DBFE-89B5-4F7D-A6CB-2229BBDB9785}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E195DBFE-89B5-4F7D-A6CB-2229BBDB9785}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E195DBFE-89B5-4F7D-A6CB-2229BBDB9785}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {932BDE66-4707-4E76-9945-B97C09A6C62D}
+	EndGlobalSection
+EndGlobal
