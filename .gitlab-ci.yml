@@ -46,7 +46,7 @@ push-docker-image:
     policy: pull
   script:
     - export Tag="$(date -d $CI_PIPELINE_CREATED_AT +%Y%m%d%H%M).$CI_PIPELINE_IID"
-    - docker build "Tgs.Payment.SBPay/Tgs.Payment.SBPay.csproj" -c $BuildConfiguration -t:ContainerBuild -p:DockerfileTag="$ImageName:$Tag" --no-restore
+    - docker build -t ${ImageName}:${TAG} .
     - docker push $ImageName:$Tag
 
 push-k8s-template:
