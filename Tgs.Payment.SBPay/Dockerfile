@@ -1,24 +1,24 @@
 ﻿#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BuildConfiguration=Release
 WORKDIR /src
 COPY ["nuget.config", "."]
 COPY ["Tgs.Payment.SBPay/Tgs.Payment.SBPay.csproj", "Tgs.Payment.SBPay/"]
 COPY ["SBPay.Core/SBPay.Core.csproj", "SBPay.Core/"]
 COPY ["SBPay.Client/SBPay.Client.csproj", "SBPay.Client/"]
-RUN dotnet restore "Tgs.Payment.SBPay/Tgs.Payment.SBPay.csproj"
+RUN dotnet restore "./Tgs.Payment.SBPay/./Tgs.Payment.SBPay.csproj"
 COPY . .
 WORKDIR "/src/Tgs.Payment.SBPay"
-RUN dotnet build "Tgs.Payment.SBPay.csproj" -c $BuildConfiguration -o /app/build
+RUN dotnet build "./Tgs.Payment.SBPay.csproj" -c $BuildConfiguration -o /app/build
 
 FROM build AS publish
 ARG BuildConfiguration
-RUN dotnet publish "Tgs.Payment.SBPay.csproj" -c $BuildConfiguration -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Tgs.Payment.SBPay.csproj" -c $BuildConfiguration -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
