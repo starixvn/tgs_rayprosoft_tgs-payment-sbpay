@@ -14,7 +14,7 @@ public class CallbackWithdrawViewModel
     /// 支付请求金额
     /// </summary>
     [JsonPropertyName("amount")]
-    public string Amount { get; set; } = default!;
+    public decimal Amount { get; set; }
 
     /// <summary>
     /// 商户订单号
@@ -29,10 +29,7 @@ public class CallbackWithdrawViewModel
     public string State { get; set; } = default!;
 
     [JsonPropertyName("sign")]
-    public string Sign { get; set; } = default!;
-
-    [JsonPropertyName("callback_url")]
-    public string CallbackUrl { get; set; } = default!;
+    public string Sign { get; set; } = default!;    
 
     /// <summary>
     /// 失败原因（须申请开启，仅失败订单会有）

@@ -12,6 +12,7 @@
     <Company>Raypro</Company>
     <PackageProjectUrl>https://gitlab.com/rayprosoft/tgs-payment-sbpay</PackageProjectUrl>
     <RepositoryUrl>https://gitlab.com/rayprosoft/tgs-payment-sbpay</RepositoryUrl>
+	<PackageTags>Tgs Payment SBPay</PackageTags>
   </PropertyGroup>
 
 </Project>

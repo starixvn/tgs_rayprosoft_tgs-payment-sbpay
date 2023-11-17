@@ -29,7 +29,7 @@ public class WithdrawController : ControllerBase
         [FromServices] IPaymentServiceClient paymentServiceClient,
         [FromServices] IPaymentClient paymentClient,
         [FromBody] CallbackWithdrawViewModel source)
-    {        
+    {
         var formId = Guid.Parse(source.OutTradeNo);
 
         var withdrawForm = await getService
@@ -43,13 +43,12 @@ public class WithdrawController : ControllerBase
         }
 
         var dict = JsonSerializer.Deserialize<Dictionary<string, object>>(JsonSerializer.Serialize(source))!;
-        _ = dict.Remove("callback_url");
 
         var sign = source.Sign;
         var hash = hasher.ComputeHash(
             withdrawForm.ApplyInfo!.Settings.ApiToken,
             withdrawForm.ApplyInfo!.Settings.NotifyToken,
-            dict.Where(kv=> kv.Value is not null)
+            dict.Where(kv => kv.Value is not null)
                 .Select(kv => new KeyValuePair<string, string?>(
                 kv.Key,
                 kv.Value!.ToString())));
@@ -65,7 +64,7 @@ public class WithdrawController : ControllerBase
         var paymentReturn = new SBPayWithdrawReturn()
         {
             FormId = formId,
-            Amount = decimal.Parse(source.Amount),
+            Amount = source.Amount,
             Sign = sign,
             ThirdPartyOrderNo = source.TradeNo,
             Status = source.State,

@@ -44,7 +44,6 @@ public class DepositController : ControllerBase
 
         var dict = JsonSerializer.Deserialize<Dictionary<string, object>>(JsonSerializer.Serialize(source))!;
         _ = dict.Remove("request_amount");
-        _ = dict.Remove("callback_url");
 
         var sign = source.Sign;
         var hash = hasher.ComputeHash(
@@ -67,8 +66,8 @@ public class DepositController : ControllerBase
             Status = source.State,
             FormId = formId,
             ThirdPartyOrderNo = source.TradeNo,
-            RealAmount = decimal.Parse(source.Amount),
-            OrderAmount = decimal.Parse(source.RequestAmount),
+            RealAmount = source.Amount,
+            OrderAmount = source.RequestAmount,
             Sign = sign,
         };
 

@@ -11,6 +11,7 @@ using Tgs.Payment.SBPay.Client;
 using Xunit.Abstractions;
 
 namespace Tgs.Payment.SBPay.IntegrationTests;
+
 public class DepositTests
 {
     private readonly ITestOutputHelper _testOutputHelper;
@@ -19,6 +20,7 @@ public class DepositTests
     {
         _testOutputHelper = testOutputHelper ?? throw new ArgumentNullException(nameof(testOutputHelper));
     }
+
     [Fact]
     public async Task 代收回調_訂單狀態成功()
     {
@@ -34,19 +36,19 @@ public class DepositTests
 
         var httpClient = web.CreateClient();
 
-        var formId = Guid.Parse("86365b8e-8368-11ee-8aa3-0242ac120006");
+        var formId = Guid.Parse("a2fb10ed-9f78-46d5-b927-ec2a36816761");
+        var brandId = Guid.NewGuid();
         var apiToken = "X9VmKmXXWn3xviG1XojhW2LYzn72e0B3ockBEsYSdXrjzmaoufpg4fVUnQy4";
         var notifyToken = "eqfB75dajWSyWYQ6x8D0Q1oKKsUkTPnA208VZtyQVBIJX1wqUIArA3MOWU5y";
 
         var request = """
             {
-                "trade_no": "1eaf0f7a-a8d3-4567-a689-fcf0405fbb11",
-                "request_amount": "200000",
-                "amount": "200000",
-                "out_trade_no": "86365b8e-8368-11ee-8aa3-0242ac120006",
-                "state": "completed",                
-                "sign": "c9962ebb037e483bd85a834e228cc56d",
-                "callback_url": "https://dev-payment.rpgp.cc/sbpay/deposit/callback"
+                "trade_no": "5e22aef2-33e1-405a-8a3c-44a734331ccf",
+                "request_amount": 200000,
+                "amount": 200000,
+                "out_trade_no": "a2fb10ed-9f78-46d5-b927-ec2a36816761",
+                "state": "completed",
+                "sign": "d47e00e2b8549f04bdf6bb328c41ad91"
             }
             """;
 
@@ -61,17 +63,17 @@ public class DepositTests
              new SBPayDepositResponse(
                 200000m,
                 formId,
-                new Uri("https://tianciv310528.com/r/t/1eaf0f7a-a8d3-4567-a689-fcf0405fbb11"),
-                "1eaf0f7a-a8d3-4567-a689-fcf0405fbb11"));
+                new Uri("https://tianciv310528.com/r/t/5e22aef2-33e1-405a-8a3c-44a734331ccf"),
+                "5e22aef2-33e1-405a-8a3c-44a734331ccf"));
 
         _ = fakePaymentServiceClient.GetDepositFormAsync(Arg.Is(formId), Arg.Any<CancellationToken>())
             .Returns(new DepositFormInfo
             {
                 Id = formId,
-                BrandId = Guid.NewGuid(),
+                BrandId = brandId,
                 Status = PaymentFlowState.WaitPayment,
                 Amount = 200000m,
-                ThirdPartyOrderNo = "1eaf0f7a-a8d3-4567-a689-fcf0405fbb11",
+                ThirdPartyOrderNo = "5e22aef2-33e1-405a-8a3c-44a734331ccf",
                 ApplyInfo = JsonSerializer.Serialize(applyInfo, SBPayUtility.SerializerOptions)
             });
 
@@ -90,7 +92,7 @@ public class DepositTests
         _ = fakePaymentClient.Received(1)
             .ApproveDepositAsync(
                 Arg.Is(formId),
-                Arg.Any<Guid>(),
+                Arg.Is(brandId),
                 Arg.Is(applyInfo.Response.Amount),
                 Arg.Any<CancellationToken>());
     }

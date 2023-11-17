@@ -14,13 +14,13 @@ public class CallbackDepositViewModel
     /// 支付请求金额
     /// </summary>
     [JsonPropertyName("request_amount")]
-    public string RequestAmount { get; set; } = default!;
+    public decimal RequestAmount { get; set; }
 
     /// <summary>
     /// 支付实际金额
     /// </summary>
     [JsonPropertyName("amount")]
-    public string Amount { get; set; } = default!;
+    public decimal Amount { get; set; }
 
     /// <summary>
     /// 商户订单号
@@ -36,7 +36,4 @@ public class CallbackDepositViewModel
 
     [JsonPropertyName("sign")]
     public string Sign { get; set; } = default!;
-
-    [JsonPropertyName("callback_url")]
-    public string CallbackUrl { get; set; } = default!;
 }

@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{996C6CDF-A33F-4683-A1A9-12E9D4030831}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		CodeMaid.config = CodeMaid.config
 		nuget.config = nuget.config
 	EndProjectSection
 EndProject
