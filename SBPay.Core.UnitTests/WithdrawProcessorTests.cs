@@ -24,7 +24,7 @@ public class WithdrawProcessorTests
         var httpClient = mockHttp.ToHttpClient();
         httpClient.BaseAddress = new Uri("https://tianciv310528.com");
 
-        var fakeGCPayClient = new SBPayClient(
+        var fakeSBPayClient = new SBPayClient(
             httpClient,
             new SBPayHasher(NullLogger<SBPayHasher>.Instance),
             NullLogger<SBPayClient>.Instance);
@@ -38,7 +38,7 @@ public class WithdrawProcessorTests
         };
 
         var sut = new WithdrawProcessor(
-            fakeGCPayClient,
+            fakeSBPayClient,
             fakePaymentClient,
             new OptionsWrapper<SBPayOptions>(options));
 

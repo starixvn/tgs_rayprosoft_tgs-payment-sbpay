@@ -28,7 +28,7 @@ public class DepositProcessorTests
         var httpClient = mockHttp.ToHttpClient();
         httpClient.BaseAddress = new Uri("https://tianciv310528.com");
 
-        var fakeGCPayClient = new SBPayClient(
+        var fakeSBPayClient = new SBPayClient(
             httpClient,
             new SBPayHasher(NullLogger<SBPayHasher>.Instance),
             NullLogger<SBPayClient>.Instance);
@@ -45,7 +45,7 @@ public class DepositProcessorTests
         var notifyToken = "eqfB75dajWSyWYQ6x8D0Q1oKKsUkTPnA208VZtyQVBIJX1wqUIArA3MOWU5y";
 
         var sut = new DepositProcessor(
-            fakeGCPayClient,
+            fakeSBPayClient,
             fakePaymentClient,
             new OptionsWrapper<SBPayOptions>(options));
 
