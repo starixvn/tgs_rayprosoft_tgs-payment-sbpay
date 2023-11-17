@@ -34,9 +34,20 @@ push-nuget:
       - SBPay.Client/bin/$BuildConfiguration/*.nupkg
 
 push-docker-image:
-  extends: .push-docker-image-template
+  stage: publish
+  needs:
+    - build-code      
+    - unit-test
+  only:
+    - main
+  cache:
+    key: Tgs.Payment.SBPay.$CI_PIPELINE_ID
+    untracked: true
+    policy: pull
   script:
-    - push_docker 'Tgs.Payment.SBPay/Tgs.Payment.SBPay.csproj' $ImageName $Tag
+    - export Tag="$(date -d $CI_PIPELINE_CREATED_AT +%Y%m%d%H%M).$CI_PIPELINE_IID"
+    - docker build --build-arg $BuildConfiguration -f Tgs.Payment.SBPay/Dockerfile -t $ImageName:$Tag . --no-cache
+    - docker push $ImageName:$Tag
 
 push-k8s-template:
   extends: .push-k8s-template
