@@ -29,7 +29,7 @@ public class DepositController : ControllerBase
         [FromServices] IPaymentServiceClient paymentServiceClient,
         [FromServices] IPaymentClient paymentClient,
         [FromBody] CallbackDepositViewModel source)
-    {        
+    {
         var formId = Guid.Parse(source.OutTradeNo);
 
         var depositForm = await getService
@@ -81,17 +81,20 @@ public class DepositController : ControllerBase
                     await fsm.FireAsync(PaymentTrigger.PaymentDepositCompleted).ConfigureAwait(false);
 
                     await paymentServiceClient.SubmitDepositFormStatusAsync(
-                    depositForm.Id,
+                        depositForm.Id,
                         paymentReturn: JsonSerializer.Serialize(
                             paymentReturn,
                             SBPayUtility.SerializerOptions),
                         cancellationToken: HttpContext.RequestAborted).ConfigureAwait(false);
+
+                    _logger.LogInformation("SBPay Deposit Callback Submit Deposit Form Status(Deposit Form Id:{depositFormId}) Executed", depositForm.Id);
 
                     await paymentClient.ApproveDepositAsync(
                         depositForm.Id,
                         depositForm.BrandId,
                         paymentReturn.RealAmount,
                         HttpContext.RequestAborted).ConfigureAwait(false);
+                    _logger.LogInformation("SBPay Deposit Callback Approve Deposit(Deposit Form Id:{depositFormId}) Executed", depositForm.Id);
                 }
 
                 break;
