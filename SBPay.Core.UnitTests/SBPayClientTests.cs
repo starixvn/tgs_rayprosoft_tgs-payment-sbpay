@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Microsoft.Extensions.Logging.Abstractions;
+using NSubstitute.ExceptionExtensions;
 using RichardSzalay.MockHttp;
 using Tgs.Payment.SBPay;
 
@@ -137,5 +138,119 @@ public class SBPayClientTests
         var actual = await sut.QueryBalanceAsync(apiToken);
 
         Assert.Equal(988400m, actual);
+    }
+
+    [Fact]
+    public async Task 代收查詢_狀態逾時()
+    {
+        var mockHttp = new MockHttpMessageHandler();
+
+        var httpClient = mockHttp.ToHttpClient();
+        httpClient.BaseAddress = new Uri("https://tianciv310528.com");
+
+        var signer = new SBPayHasher(NullLogger<SBPayHasher>.Instance);
+
+        var sut = new SBPayClient(httpClient, signer, NullLogger<SBPayClient>.Instance);
+
+        var apiToken = "euIAhKfGK8oAaXIGgfhDSDWflKO003zz2tQl90jb1vuw6vz83CVxkCoptINt";
+        var formId = Guid.Parse("0ff96c9d-d3f7-467f-90d2-9917820e89bf");
+
+        _ = mockHttp
+            .Expect(HttpMethod.Get, "https://tianciv310528.com/api/transaction/0ff96c9d-d3f7-467f-90d2-9917820e89bf")
+            .WithHeaders(new Dictionary<string, string>
+            {
+                { "Accept", "application/json" },
+                { "Authorization", $"Bearer {apiToken}" }
+            })
+            .Respond(HttpStatusCode.OK, new StringContent("""
+                {
+                    "data": {
+                        "trade_no": "e41840c9-a792-482f-ab4d-b0dca0489757",
+                        "out_trade_no": "0ff96c9d-d3f7-467f-90d2-9917820e89bf",
+                        "amount": 200000,
+                        "request_amount": 200000,
+                        "state": "timeout"
+                    },
+                    "success": true
+                }
+                """));
+
+        var actual = await sut.QueryDepositFormStatusAsync(apiToken, formId);
+
+        Assert.Equal("timeout", actual.State);
+    }
+
+    [Fact]
+    public async Task 代收查詢_狀態處理中()
+    {
+        var mockHttp = new MockHttpMessageHandler();
+
+        var httpClient = mockHttp.ToHttpClient();
+        httpClient.BaseAddress = new Uri("https://tianciv310528.com");
+
+        var signer = new SBPayHasher(NullLogger<SBPayHasher>.Instance);
+
+        var sut = new SBPayClient(httpClient, signer, NullLogger<SBPayClient>.Instance);
+
+        var apiToken = "euIAhKfGK8oAaXIGgfhDSDWflKO003zz2tQl90jb1vuw6vz83CVxkCoptINt";
+        var formId = Guid.Parse("d083e4de-cc49-48ea-bcc5-c23d5edef841");
+
+        _ = mockHttp
+            .Expect(HttpMethod.Get, "https://tianciv310528.com/api/transaction/d083e4de-cc49-48ea-bcc5-c23d5edef841")
+            .WithHeaders(new Dictionary<string, string>
+            {
+                { "Accept", "application/json" },
+                { "Authorization", $"Bearer {apiToken}" }
+            })
+            .Respond(HttpStatusCode.OK, new StringContent("""
+                {
+                    "data": {
+                        "trade_no": "59adaf4e-b2c9-4499-858d-e34835531845",
+                        "out_trade_no": "d083e4de-cc49-48ea-bcc5-c23d5edef841",
+                        "amount": 200000,
+                        "request_amount": 200000,
+                        "state": "processing"
+                    },
+                    "success": true
+                }
+                """));
+
+        var actual = await sut.QueryDepositFormStatusAsync(apiToken, formId);
+
+        Assert.Equal("processing", actual.State);
+    }
+
+    [Fact]
+    public void 代收查詢_未找到()
+    {
+        var mockHttp = new MockHttpMessageHandler();
+
+        var httpClient = mockHttp.ToHttpClient();
+        httpClient.BaseAddress = new Uri("https://tianciv310528.com");
+
+        var signer = new SBPayHasher(NullLogger<SBPayHasher>.Instance);
+
+        var sut = new SBPayClient(httpClient, signer, NullLogger<SBPayClient>.Instance);
+
+        var apiToken = "recV41A3c0DamceTCn6iU4N74h9isF9c4dtreKHFSWLvKIZhlyAvzh1g4cfp";
+        var formId = Guid.Parse("d083e4de-cc49-48ea-bcc5-c23d5edef841");
+
+        _ = mockHttp
+            .Expect(HttpMethod.Get, "https://tianciv310528.com/api/transaction/d083e4de-cc49-48ea-bcc5-c23d5edef841")
+            .WithHeaders(new Dictionary<string, string>
+            {
+                { "Accept", "application/json" },
+                { "Authorization", $"Bearer {apiToken}" }
+            })
+            .Respond(HttpStatusCode.OK, new StringContent("""
+                {
+                    "success": false,
+                    "status_code": 404,
+                    "message": "Not Found",
+                    "errors": []
+                }
+                """));
+
+        _ = Assert.ThrowsAsync<ApiFailException>(async () => await sut.QueryDepositFormStatusAsync(apiToken, formId));
     }
 }

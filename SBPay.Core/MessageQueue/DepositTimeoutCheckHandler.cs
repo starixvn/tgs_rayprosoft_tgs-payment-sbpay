@@ -68,7 +68,7 @@ internal class DepositTimeoutCheckHandler : IMessageHandler
 
             var fsm = PaymentStateMachineFactory.CreateDepositStateMachine(depositForm.Status);
 
-            if (result.State is "timeout" or "reject" or "failed" or "refund")
+            if (result.State is "timeout")
             {
                 if (fsm.CanFire(PaymentTrigger.Reject))
                 {
@@ -79,12 +79,14 @@ internal class DepositTimeoutCheckHandler : IMessageHandler
                         .ConfigureAwait(false);
                 }
             }
-            else if (result?.State is not "processing")
+            else if (result?.State is "processing")
                 await _paymentClient.ScheduleAsync(
                     "tgs.payment.sbpay.deposit.schedule.reject",
                     formId,
                     DateTime.UtcNow.AddMinutes(10D),
                     cancellationToken).ConfigureAwait(false);
+            else
+                _logger.LogWarning("Query Deposit Form Status formId:{formId}, state:{state}", formId, result?.State);
         }
         catch (Exception ex)
         {
