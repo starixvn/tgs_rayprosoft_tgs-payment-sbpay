@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using Microsoft.Extensions.Logging.Abstractions;
-using NSubstitute.ExceptionExtensions;
 using RichardSzalay.MockHttp;
 using Tgs.Payment.SBPay;
 

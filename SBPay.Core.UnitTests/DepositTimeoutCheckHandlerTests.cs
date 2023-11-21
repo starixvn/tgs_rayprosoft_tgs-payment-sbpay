@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using Castle.Core.Logging;
+﻿using System.Text.Json;
 using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Options;
 using NSubstitute;
 using RichardSzalay.MockHttp;
 using Tgs.Payment.Clients;
@@ -149,7 +142,7 @@ public class DepositTimeoutCheckHandlerTests
 				        "state": "processing"
 				    },
 				    "success": true
-				}			
+				}
 				"""));
 
         // Act
@@ -161,6 +154,5 @@ public class DepositTimeoutCheckHandlerTests
                 Arg.Is("tgs.payment.sbpay.deposit.schedule.reject"),
                 Arg.Is(request.FormId.ToGuid()),
                 Arg.Any<DateTime>());
-
     }
 }
