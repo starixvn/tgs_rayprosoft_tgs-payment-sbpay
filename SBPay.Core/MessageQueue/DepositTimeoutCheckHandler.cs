@@ -68,7 +68,7 @@ internal class DepositTimeoutCheckHandler : IMessageHandler
 
             var fsm = PaymentStateMachineFactory.CreateDepositStateMachine(depositForm.Status);
 
-            if (result.State is "reject" or "failed" or "refund")
+            if (result.State is "timeout" or "reject" or "failed" or "refund")
             {
                 if (fsm.CanFire(PaymentTrigger.Reject))
                 {
