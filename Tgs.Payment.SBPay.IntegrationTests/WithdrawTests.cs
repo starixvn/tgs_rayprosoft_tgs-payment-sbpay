@@ -45,7 +45,8 @@ public class WithdrawTests
             formId,
             "ACB",
             "王小明",
-            "6212262000000000001");
+            "6212262000000000001",
+            ExchangeRate: 1m);
         var withdrawResponse = new SBPayWithdrawResponse(formId);
 
         var applyInfo = new SBPayWithdrawApplyInfo(settings, withdrawResponse);
@@ -77,11 +78,21 @@ public class WithdrawTests
 
         var actual = await response.Content.ReadAsStringAsync();
 
+        var paymentReturn = new SBPayWithdrawReturn()
+        {
+            FormId = formId,
+            Amount = 500m,
+            Sign = "76a55d5636b9285cdc10cf5cb33811d1",
+            ThirdPartyOrderNo = "1d786b53-b17d-4aa3-8ad0-bc9a57e100fe",
+            Status = "completed",
+            AfterExchangeAmount = 500m
+        };
+
         Assert.Equal("ok", actual);
         _ = fakePaymentServiceClient.Received(1)
             .SubmitWithdrawFormStatusAsync(
                 Arg.Is(formId),
-                paymentReturn: Arg.Any<string>(),
+                paymentReturn: Arg.Is(JsonSerializer.Serialize(paymentReturn, SBPayUtility.SerializerOptions)),
                 cancellationToken: Arg.Any<CancellationToken>());
 
         _ = fakePaymentClient.Received(1)
@@ -117,7 +128,8 @@ public class WithdrawTests
             formId,
             "ACB",
             "王小明",
-            "6212262000000000001");
+            "6212262000000000001",
+            ExchangeRate: 1m);
         var withdrawResponse = new SBPayWithdrawResponse(formId);
 
         var applyInfo = new SBPayWithdrawApplyInfo(settings, withdrawResponse);
@@ -149,11 +161,21 @@ public class WithdrawTests
 
         var actual = await response.Content.ReadAsStringAsync();
 
+        var paymentReturn = new SBPayWithdrawReturn()
+        {
+            FormId = formId,
+            Amount = 500m,
+            Sign = "082e18fea24e2865c1540b12730e0776",
+            ThirdPartyOrderNo = "fefa6779-0a9f-4b8b-a1ec-41f03a4816c3",
+            Status = "failed",
+            AfterExchangeAmount = 500m
+        };
+
         Assert.Equal("ok", actual);
         _ = fakePaymentServiceClient.Received(1)
             .SubmitWithdrawFormStatusAsync(
                 Arg.Is(formId),
-                paymentReturn: Arg.Any<string>(),
+                paymentReturn: Arg.Is(JsonSerializer.Serialize(paymentReturn, SBPayUtility.SerializerOptions)),
                 cancellationToken: Arg.Any<CancellationToken>());
 
         _ = fakePaymentClient.Received(1)
@@ -189,7 +211,8 @@ public class WithdrawTests
             formId,
             "ACB",
             "王小明",
-            "6212262000000000001");
+            "6212262000000000001", 
+            ExchangeRate: 1m);
         var withdrawResponse = new SBPayWithdrawResponse(formId);
 
         var applyInfo = new SBPayWithdrawApplyInfo(settings, withdrawResponse);
@@ -221,11 +244,21 @@ public class WithdrawTests
 
         var actual = await response.Content.ReadAsStringAsync();
 
+        var paymentReturn = new SBPayWithdrawReturn()
+        {
+            FormId = formId,
+            Amount = 500m,
+            Sign = "3685bcaa1f414039077c67ebe25a41ff",
+            ThirdPartyOrderNo = "4e29e3bd-1c30-494c-8946-72f1fb3ad06f",
+            Status = "refund",
+            AfterExchangeAmount = 500m
+        };
+
         Assert.Equal("ok", actual);
         _ = fakePaymentServiceClient.Received(1)
             .SubmitWithdrawFormStatusAsync(
                 Arg.Is(formId),
-                paymentReturn: Arg.Any<string>(),
+                paymentReturn: Arg.Is(JsonSerializer.Serialize(paymentReturn, SBPayUtility.SerializerOptions)),
                 cancellationToken: Arg.Any<CancellationToken>());
 
         _ = fakePaymentClient.Received(1)

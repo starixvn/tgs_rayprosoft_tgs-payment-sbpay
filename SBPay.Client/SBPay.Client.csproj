@@ -7,7 +7,7 @@
     <RootNamespace>Tgs.Payment.SBPay.Client</RootNamespace>
     <PackageId>Tgs.Payment.SBPay.Client</PackageId>
     <Title>Tgs.Payment.SBPay.Client</Title>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <Authors>Raypro</Authors>
     <Company>Raypro</Company>
     <PackageProjectUrl>https://gitlab.com/rayprosoft/tgs-payment-sbpay</PackageProjectUrl>

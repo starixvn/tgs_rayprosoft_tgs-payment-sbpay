@@ -33,7 +33,7 @@ internal class DepositProcessor : IMessageProcessor
             SBPayUtility.SerializerOptions)!;
 
         var order = new DepositOrder(
-            decimal.Parse(request.Amount),
+            decimal.Parse(request.Amount) * settings.ExchangeRate,
             settings.FormId,
             new Uri($"{_options.CallbackBaseUrl}/deposit/callback"),
             settings.Bank);
