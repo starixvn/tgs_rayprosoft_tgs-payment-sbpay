@@ -45,7 +45,8 @@ public class DepositTimeoutCheckHandlerTests
                 "euIAhKfGK8oAaXIGgfhDSDWflKO003zz2tQl90jb1vuw6vz83CVxkCoptINt",
                 "8E4E8xglfyfz2xCOgDawAYWQuertBteQ06mA9V9IcLafROlM186DYHPtxNEj",
                 formId,
-                null),
+                null,
+                ExchangeRate: 1m),
             new SBPayDepositResponse(
                 200000m,
                 formId,
@@ -115,7 +116,8 @@ public class DepositTimeoutCheckHandlerTests
                 "euIAhKfGK8oAaXIGgfhDSDWflKO003zz2tQl90jb1vuw6vz83CVxkCoptINt",
                 "8E4E8xglfyfz2xCOgDawAYWQuertBteQ06mA9V9IcLafROlM186DYHPtxNEj",
                 formId,
-                null),
+                null, 
+                ExchangeRate: 1m),
             new SBPayDepositResponse(
                 200000m,
                 formId,

@@ -69,6 +69,8 @@ public class DepositController : ControllerBase
             RealAmount = source.Amount,
             OrderAmount = source.RequestAmount,
             Sign = sign,
+            AfterExchangeRealAmount = source.Amount / depositForm.ApplyInfo.Settings.ExchangeRate,
+            AfterExchangeOrderAmount = source.RequestAmount / depositForm.ApplyInfo.Settings.ExchangeRate
         };
 
         var fsm = PaymentStateMachineFactory.CreateDepositStateMachine(depositForm.Status);
@@ -92,7 +94,7 @@ public class DepositController : ControllerBase
                     await paymentClient.ApproveDepositAsync(
                         depositForm.Id,
                         depositForm.BrandId,
-                        paymentReturn.RealAmount,
+                        paymentReturn.AfterExchangeRealAmount,
                         HttpContext.RequestAborted).ConfigureAwait(false);
                     _logger.LogInformation("SBPay Deposit Callback Approve Deposit(Deposit Form Id:{depositFormId}) Executed", depositForm.Id);
                 }

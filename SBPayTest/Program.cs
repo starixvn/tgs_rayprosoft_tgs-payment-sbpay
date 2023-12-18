@@ -47,7 +47,8 @@ var withdrawSettings = new SBPayWithdrawSettings(
     Guid.NewGuid(),
     BankId: "ACB",
     BankOwner: "王小明",
-    AccountNumber: "6212262000000000001");
+    AccountNumber: "6212262000000000001",
+    ExchangeRate: 1m);
 
 var withdrawReturn = await paymentClient.WithdrawAsync(
     "tgs.payment.sbpay.withdraw",

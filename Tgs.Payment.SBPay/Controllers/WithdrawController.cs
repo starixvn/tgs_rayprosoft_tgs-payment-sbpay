@@ -68,6 +68,7 @@ public class WithdrawController : ControllerBase
             Sign = sign,
             ThirdPartyOrderNo = source.TradeNo,
             Status = source.State,
+            AfterExchangeAmount = source.Amount / withdrawForm.ApplyInfo.Settings.ExchangeRate
         };
 
         var fsm = PaymentStateMachineFactory.CreateWithdrawStateMachine(withdrawForm.Status);
@@ -80,7 +81,7 @@ public class WithdrawController : ControllerBase
                     await fsm.FireAsync(PaymentTrigger.PaymentWithdrawCompleted).ConfigureAwait(false);
 
                     await paymentServiceClient.SubmitWithdrawFormStatusAsync(
-                    withdrawForm.Id,
+                        withdrawForm.Id,
                         paymentReturn: JsonSerializer.Serialize(
                             paymentReturn,
                             SBPayUtility.SerializerOptions),
