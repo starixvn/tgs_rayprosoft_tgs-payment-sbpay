@@ -106,7 +106,7 @@ public class DepositTests
             .ApproveDepositAsync(
                 Arg.Is(formId),
                 Arg.Is(brandId),
-                Arg.Is(paymentReturn.AfterExchangeRealAmount),
+                Arg.Is(paymentReturn.AfterExchangeOrderAmount),
                 Arg.Any<CancellationToken>());
     }
 
@@ -195,7 +195,7 @@ public class DepositTests
             .ApproveDepositAsync(
                 Arg.Is(formId),
                 Arg.Is(brandId),
-                Arg.Is(paymentReturn.AfterExchangeRealAmount),
+                Arg.Is(paymentReturn.AfterExchangeOrderAmount),
                 Arg.Any<CancellationToken>());
     }
 }
