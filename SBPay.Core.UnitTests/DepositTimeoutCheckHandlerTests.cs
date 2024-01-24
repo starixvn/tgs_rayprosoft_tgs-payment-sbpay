@@ -15,7 +15,7 @@ namespace SBPay.Core.UnitTests;
 public class DepositTimeoutCheckHandlerTests
 {
     [Fact]
-    public async Task 檢查已經申請九分鐘的單子是否已經完成()
+    public async Task 檢查已經申請六十分鐘的單子是否已經完成()
     {
         // Arrange
         var fakePaymentServiceClient = Substitute.For<IPaymentServiceClient>();
