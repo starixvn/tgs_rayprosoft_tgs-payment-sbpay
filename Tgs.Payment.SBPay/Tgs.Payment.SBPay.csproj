@@ -6,8 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
 	<SqlQueryToolsConnectionString />
     <UserSecretsId>d01f83d6-a6e8-4d06-823a-1b02f10e8590</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-	<DockerfileBuildArguments>--build-arg "BuildConfiguration=$(Configuration)"</DockerfileBuildArguments>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>	
 	<DockerfileTag Condition="$(DockerfileTag) == ''">pgtgs/payment-sb</DockerfileTag>
   </PropertyGroup>
 
