@@ -12,6 +12,7 @@ using Tgs.Payment.SBPay.Client;
 using Tgs.Payment.SBPay.MessageQueue;
 
 namespace SBPay.Core.UnitTests;
+
 public class DepositProcessorTests
 {
     [Fact]
@@ -79,9 +80,12 @@ public class DepositProcessorTests
                 """));
 
         // Act
-        var actual = await sut.HandleAsync(request.ToByteArray());
-        var response = DepositResponse.Parser.ParseFrom(actual.Span);
-        var applyInfo = JsonSerializer.Deserialize<SBPayDepositApplyInfo>(response.Result, SBPayUtility.SerializerOptions);
+        var actual = await sut.HandleAsync(
+            "tgs.payment.sbpay.deposit",
+            request,
+            null);
+
+        var applyInfo = JsonSerializer.Deserialize<SBPayDepositApplyInfo>(actual.Result, SBPayUtility.SerializerOptions);
 
         // Assert
         _ = fakePaymentClient.Received(1)
@@ -165,9 +169,11 @@ public class DepositProcessorTests
                 """));
 
         // Act
-        var actual = await sut.HandleAsync(request.ToByteArray());
-        var response = DepositResponse.Parser.ParseFrom(actual.Span);
-        var applyInfo = JsonSerializer.Deserialize<SBPayDepositApplyInfo>(response.Result, SBPayUtility.SerializerOptions);
+        var actual = await sut.HandleAsync("tgs.payment.sbpay.deposit",
+            request,
+            null);
+        
+        var applyInfo = JsonSerializer.Deserialize<SBPayDepositApplyInfo>(actual.Result, SBPayUtility.SerializerOptions);
 
         // Assert
         _ = fakePaymentClient.Received(1)

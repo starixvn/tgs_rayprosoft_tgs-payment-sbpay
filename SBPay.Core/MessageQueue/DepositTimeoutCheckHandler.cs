@@ -7,36 +7,31 @@ using Tgs.Payment.SBPay.Client;
 
 namespace Tgs.Payment.SBPay.MessageQueue;
 
-internal class DepositTimeoutCheckHandler : IMessageHandler
+internal class DepositTimeoutCheckHandler(
+    IPaymentServiceClient paymentServiceClient,
+    SBPayClient sBPayClient,
+    IPaymentClient paymentClient,
+    ILogger<DepositTimeoutCheckHandler> logger)
+    : IMessageHandler<ScheduleRequest>
 {
-    private readonly IPaymentServiceClient _paymentServiceClient;
-    private readonly SBPayClient _sBPayClient;
-    private readonly IPaymentClient _paymentClient;
-    private readonly ILogger<DepositTimeoutCheckHandler> _logger;
+    private readonly IPaymentServiceClient _paymentServiceClient = paymentServiceClient ?? throw new ArgumentNullException(nameof(paymentServiceClient));
+    private readonly SBPayClient _sBPayClient = sBPayClient ?? throw new ArgumentNullException(nameof(sBPayClient));
+    private readonly IPaymentClient _paymentClient = paymentClient ?? throw new ArgumentNullException(nameof(paymentClient));
+    private readonly ILogger<DepositTimeoutCheckHandler> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-    public DepositTimeoutCheckHandler(
-        IPaymentServiceClient paymentServiceClient,
-        SBPayClient sBPayClient,
-        IPaymentClient paymentClient,
-        ILogger<DepositTimeoutCheckHandler> logger)
+    public async ValueTask HandleAsync(
+        string subject,
+        ScheduleRequest data,
+        IEnumerable<MessageHeaderValue>? headerValues,
+        CancellationToken cancellationToken = default)
     {
-        _paymentServiceClient = paymentServiceClient ?? throw new ArgumentNullException(nameof(paymentServiceClient));
-        _sBPayClient = sBPayClient ?? throw new ArgumentNullException(nameof(sBPayClient));
-        _paymentClient = paymentClient ?? throw new ArgumentNullException(nameof(paymentClient));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
-
-    public async ValueTask HandleAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
-    {
-        var request = ScheduleRequest.Parser.ParseFrom(data.Span);
-
         _logger.LogInformation(
             "Deposit Schedule Handler Receive request Form Id:{request.FormId.ToGuid()}, "
                 + "Schedule Time:{request.ScheduleTime.ToDateTime():yyyy/MM/dd HH:mm:ss}",
-            request.FormId.ToGuid(),
-            request.ScheduleTime.ToDateTime());
+            data.FormId.ToGuid(),
+            data.ScheduleTime.ToDateTime());
 
-        var formId = request.FormId.ToGuid();
+        var formId = data.FormId.ToGuid();
 
         try
         {
@@ -46,7 +41,7 @@ internal class DepositTimeoutCheckHandler : IMessageHandler
 
             if (depositForm is null)
             {
-                _logger.LogWarning("Deposit Form {request.FormId.ToGuid()} not found.", request.FormId.ToGuid());
+                _logger.LogWarning("Deposit Form {request.FormId.ToGuid()} not found.", data.FormId.ToGuid());
                 return;
             }
 
