@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.HttpLogging;
+﻿using FluentdForward.OpenTelemetry.MessagePack;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.Extensions.Options;
+using NATS.Client.Core;
 using OpenTelemetry.Instrumentation.AspNetCore;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Tgs.MessageQueue.Nats.Serializers;
 using Tgs.Payment.SBPay;
 using Tgs.Payment.SBPay.MessageQueue;
 
@@ -19,7 +22,9 @@ builder.Logging
             var nodeIp = builder.Configuration.GetValue<string>("NODE_IP")!;
             fluentOptions.Host = nodeIp;
             fluentOptions.Tag = builder.Configuration.GetValue<string>("OTEL_SERVICE_NAME")!;
-            fluentOptions.UseMessagePack();
+            fluentOptions.UseMessagePack(LogRecordFormatterResolver.GetResolverInstanceWithExtendInfo(
+                "MachineName",
+                () => Environment.MachineName));
         });
     });
 
@@ -47,14 +52,16 @@ builder.Services
         }));
 
 builder.Services
-    .AddPhoenixToolkitsMessageQueue()
-    .AddNatsMessageQueue(config => config
-        .ConfigQueueOptions((options, sp) =>
+    .AddKeyedSingleton(
+        "Nats",
+        (sp, _) => new NatsConnection(NatsOpts.Default with
         {
-            var config = sp.GetRequiredService<IConfiguration>();
-
-            options.Url = config.GetConnectionString("Nats")!;
-        })
+            Url = builder.Configuration.GetConnectionString("Nats")!,
+            SerializerRegistry = TgsNatsSerializerRegistration.Default
+        }))
+    .AddMessageQueue()
+    .AddNatsMessageQueue(config => config
+        .ConfigureResolveConnection(sp => sp.GetRequiredKeyedService<NatsConnection>("Nats"))
         .AddProcessor(
             ProcessorTypes.DepositProcessorType,
             "tgs.payment.sbpay.deposit",
@@ -65,8 +72,12 @@ builder.Services
             "tgs.payment.sbpay.withdraw")
         .AddHandler(
             ProcessorTypes.DepositTimeoutCheckHandlerType,
-            $"tgs.payment.sbpay.deposit.schedule.reject",
-            $"tgs.payment.sbpay.deposit.schedule.reject"))
+            "tgs.payment.sbpay.deposit.schedule.reject",
+            "tgs.payment.sbpay.deposit.schedule.reject")
+        .AddProcessor(
+            ProcessorTypes.GetBalanceProcessorType,
+            "tgs.payment.sbpay.balance",
+            "tgs.payment.sbpay.balance"))
     .AddNatsGlobPatternExchange("*");
 
 builder.Services

@@ -77,7 +77,7 @@ public class DepositTimeoutCheckHandlerTests
 				"""));
 
         // Act
-        await sut.HandleAsync(request.ToByteArray());
+        await sut.HandleAsync($"tgs.payment.sbpay.deposit.schedule.reject", request, null);
 
         // Assert
         _ = fakePaymentClient
@@ -148,7 +148,7 @@ public class DepositTimeoutCheckHandlerTests
 				"""));
 
         // Act
-        await sut.HandleAsync(request.ToByteArray());
+        await sut.HandleAsync($"tgs.payment.sbpay.deposit.schedule.reject", request, null);
 
         // Assert
         _ = fakePaymentClient.Received(1)

@@ -8,7 +8,8 @@ using Valhalla.MessageQueue;
 
 namespace Tgs.Payment.SBPay.MessageQueue;
 
-internal class WithdrawProcessor : IMessageProcessor
+internal class WithdrawProcessor
+    : IMessageProcessor<WithdrawRequest, WithdrawResponse>
 {
     private readonly SBPayClient _sBPayClient;
     private readonly IPaymentClient _paymentClient;
@@ -24,14 +25,19 @@ internal class WithdrawProcessor : IMessageProcessor
         _options = optionsAccessor.Value;
     }
 
-    public async ValueTask<ReadOnlyMemory<byte>> HandleAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
+    public async ValueTask<WithdrawResponse> HandleAsync(
+        string subject,
+        WithdrawRequest data,
+        IEnumerable<MessageHeaderValue>? headerValues,
+        CancellationToken cancellationToken = default)
     {
-        var request = WithdrawRequest.Parser.ParseFrom(data.Span);
-        var settings = JsonSerializer.Deserialize<SBPayWithdrawSettings>(request.ApplyInfo, SBPayUtility.SerializerOptions)!;
+        var settings = JsonSerializer.Deserialize<SBPayWithdrawSettings>(
+            data.ApplyInfo,
+            SBPayUtility.SerializerOptions)!;
 
         var order = new WithdrawOrder(
             settings.FormId,
-            decimal.Parse(request.Amount) * settings.ExchangeRate,
+            decimal.Parse(data.Amount) * settings.ExchangeRate,
             new Uri($"{_options.CallbackBaseUrl}/withdraw/callback"),
             settings.BankId,
             settings.BankOwner,
@@ -51,11 +57,9 @@ internal class WithdrawProcessor : IMessageProcessor
             withdrawResponse.ThirdPartyOrderNo,
             cancellationToken);
 
-        var msg = new WithdrawResponse
+        return new WithdrawResponse
         {
             Result = JsonSerializer.Serialize(applyInfo, SBPayUtility.SerializerOptions)
         };
-
-        return msg.ToByteArray();
     }
 }

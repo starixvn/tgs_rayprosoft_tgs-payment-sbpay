@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using Google.Protobuf;
 using Microsoft.Extensions.Options;
 using Tgs.Payment.Clients;
 using Tgs.Payment.Protos;
@@ -8,37 +7,31 @@ using Valhalla.MessageQueue;
 
 namespace Tgs.Payment.SBPay.MessageQueue;
 
-internal class DepositProcessor : IMessageProcessor
+internal class DepositProcessor(
+    SBPayClient sBPayClient,
+    IPaymentClient paymentClient,
+    IOptions<SBPayOptions> optionsAccessor)
+    : IMessageProcessor<DepositRequest, DepositResponse>
 {
-    private readonly SBPayClient _sBPayClient;
-    private readonly IPaymentClient _paymentClient;
-    private readonly SBPayOptions _options;
+    private readonly SBPayOptions _options = optionsAccessor.Value;
 
-    public DepositProcessor(
-        SBPayClient sBPayClient,
-        IPaymentClient paymentClient,
-        IOptions<SBPayOptions> optionsAccessor)
+    public async ValueTask<DepositResponse> HandleAsync(
+        string subject,
+        DepositRequest data,
+        IEnumerable<MessageHeaderValue>? headerValues,
+        CancellationToken cancellationToken = default)
     {
-        _sBPayClient = sBPayClient ?? throw new ArgumentNullException(nameof(sBPayClient));
-        _paymentClient = paymentClient ?? throw new ArgumentNullException(nameof(paymentClient));
-        _options = optionsAccessor.Value;
-    }
-
-    public async ValueTask<ReadOnlyMemory<byte>> HandleAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
-    {
-        var request = DepositRequest.Parser.ParseFrom(data.Span);
-
         var settings = JsonSerializer.Deserialize<SBPayDepositSettings>(
-            request.ApplyInfo,
+            data.ApplyInfo,
             SBPayUtility.SerializerOptions)!;
 
         var order = new DepositOrder(
-            decimal.Parse(request.Amount) * settings.ExchangeRate,
+            decimal.Parse(data.Amount) * settings.ExchangeRate,
             settings.FormId,
             new Uri($"{_options.CallbackBaseUrl}/deposit/callback"),
             settings.Bank);
 
-        var depositResponse = await _sBPayClient.DepositAsync(
+        var depositResponse = await sBPayClient.DepositAsync(
             settings.ApiToken,
             order,
             cancellationToken).ConfigureAwait(false);
@@ -51,17 +44,15 @@ internal class DepositProcessor : IMessageProcessor
                 depositResponse.RedirectUrl,
                 depositResponse.ThirdPartyOrderNo));
 
-        await _paymentClient.ScheduleAsync(
+        await paymentClient.ScheduleAsync(
             "tgs.payment.sbpay.deposit.schedule.reject",
             settings.FormId,
             DateTime.UtcNow.AddMinutes(60D),
             cancellationToken).ConfigureAwait(false);
 
-        var msg = new DepositResponse
+        return new DepositResponse
         {
             Result = JsonSerializer.Serialize(applyInfo, SBPayUtility.SerializerOptions)
         };
-
-        return msg.ToByteArray();
     }
 }
